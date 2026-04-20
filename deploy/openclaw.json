@@ -1,7 +1,10 @@
 {
   "gateway": {
     "mode": "local",
-    "bind": "lan"
+    "bind": "lan",
+    "controlUi": {
+      "dangerouslyAllowHostHeaderOriginFallback": true
+    }
   },
   "plugins": {
     "entries": {

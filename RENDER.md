@@ -10,8 +10,9 @@ Create a **Web Service**, not a **Background Worker**. OpenClaw runs an HTTP + W
 
 1. Open **Logs** (not Events) and read the first error line after each restart.
 2. Confirm **`OPENCLAW_GATEWAY_TOKEN`** is set (Render “generate value” or paste `openssl rand -hex 32`). Binding with `--bind lan` requires auth unless the gateway bootstraps a token on first run.
-3. Confirm **`OPENCLAW_GATEWAY_PORT`** matches what Render expects (this blueprint uses `8080` for Web services).
+3. Confirm the process listens on Render’s **`PORT`** (the entrypoint sets **`OPENCLAW_GATEWAY_PORT=$PORT`** when `RENDER=true`). A fixed port in the dashboard can cause “no open ports detected” / failed health checks.
 4. If you use **`TELEGRAM_OWNER_USER_ID`**, a bad or half-written `openclaw.json` used to crash the merge step; the merge script now skips on parse errors so the gateway can still start—fix the file in Logs if you see a parse warning.
+5. **`non-loopback Control UI requires … allowedOrigins`:** the seeded config sets `gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback` for public Web deploys; on Render, `scripts/render-ensure-control-ui-origins.mjs` patches older persisted configs. For a stricter setup, replace that with explicit `gateway.controlUi.allowedOrigins` (for example `https://your-service.onrender.com`).
 
 ## Required environment variables (Dashboard)
 

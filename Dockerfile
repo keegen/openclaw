@@ -185,6 +185,7 @@ COPY --from=build --chown=node:node /app/deploy/openclaw.json ./deploy/openclaw.
 COPY --from=build --chown=node:node /app/workspace ./deploy/workspace
 COPY --from=build --chmod=755 --chown=node:node /app/scripts/render-entrypoint.sh ./scripts/render-entrypoint.sh
 COPY --from=build --chown=node:node /app/scripts/render-merge-telegram-owner.mjs ./scripts/render-merge-telegram-owner.mjs
+COPY --from=build --chown=node:node /app/scripts/render-ensure-control-ui-origins.mjs ./scripts/render-ensure-control-ui-origins.mjs
 
 # Keep pnpm available in the runtime image for container-local workflows.
 # Use a shared Corepack home so the non-root `node` user does not need a
@@ -285,5 +286,5 @@ USER node
 #   - aliases: /health and /ready
 # For external access from host/ingress, override bind to "lan" and set auth.
 HEALTHCHECK --interval=3m --timeout=10s --start-period=15s --retries=3 \
-  CMD node -e "const p=Number(process.env.OPENCLAW_GATEWAY_PORT||18789);fetch('http://127.0.0.1:'+p+'/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "const p=Number(process.env.OPENCLAW_GATEWAY_PORT||process.env.PORT||18789);fetch('http://127.0.0.1:'+p+'/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["bash", "scripts/render-entrypoint.sh"]
