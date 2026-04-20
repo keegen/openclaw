@@ -4,6 +4,7 @@ services:
     runtime: docker
     plan: starter
     healthCheckPath: /health
+    dockerCommand: node openclaw.mjs gateway --allow-unconfigured --bind lan
     envVars:
       - key: OPENCLAW_GATEWAY_PORT
         value: "8080"
@@ -13,6 +14,10 @@ services:
         value: /data/workspace
       - key: OPENCLAW_GATEWAY_TOKEN
         generateValue: true
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
     disk:
       name: openclaw-data
       mountPath: /data
