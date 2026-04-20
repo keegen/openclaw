@@ -17,13 +17,23 @@ This fork ships a default OpenClaw config and workspace templates that are **cop
 | `BRAVE_API_KEY` | Better web search via Brave Search API ([Brave Search API](https://brave.com/search/api/)). |
 | `PERPLEXITY_API_KEY` | Alternative search/research backend. |
 | `FIRECRAWL_API_KEY` | Web fetch / crawl via Firecrawl. |
+| `TELEGRAM_OWNER_USER_ID` | Your numeric Telegram user id; entrypoint sets DM `allowlist` so you can skip Shell pairing (see below). |
 
-## Telegram access
+## Telegram access (no Render Shell required)
 
-- **Default:** `channels.telegram.dmPolicy` is `pairing` in `deploy/openclaw.json`. DM the bot, then in Render **Shell** run `openclaw pairing list telegram` and `openclaw pairing approve telegram <CODE>`.
+If the Render web **Shell** disconnects before you can run commands, use this instead:
+
+1. In Telegram, DM **[@userinfobot](https://t.me/userinfobot)** (or **[@getidsbot](https://t.me/getidsbot)**) and copy your **numeric user id** (digits only).
+2. In Render → **Environment**, add **`TELEGRAM_OWNER_USER_ID`** with that value (plain digits, no quotes).
+3. **Save** — Render will redeploy. On each start, `scripts/render-entrypoint.sh` merges that id into `/data/.openclaw/openclaw.json` as `channels.telegram.dmPolicy: "allowlist"` and `allowFrom: [<your id>]`, so your DMs are authorized without pairing CLI.
+
+**Security:** anyone who knows your numeric Telegram id could theoretically impersonate that id in config; keep your Render project private and rotate the bot token if leaked.
+
+### Optional: Shell / pairing (when Shell works)
+
+- **Pairing:** `openclaw pairing list telegram` then `openclaw pairing approve telegram <CODE>`.
 - **If the bot “reads” messages but never answers:** check **Logs** for model or provider errors. The Docker image must include the **`openai`** bundled extension (see `Dockerfile` `OPENCLAW_EXTENSIONS`) so `openai/gpt-5.4` can run; also confirm `OPENAI_API_KEY` is set in the dashboard.
-- **Pairing:** until you approve a pairing code, the assistant will not run a full reply for DMs (you should still receive a short pairing message with a code when pairing is working).
-- **Skip pairing (single owner):** edit `/data/.openclaw/openclaw.json` on the disk (or edit `deploy/openclaw.json` in git and redeploy after removing the existing file on disk) to set `dmPolicy` to `allowlist` and add your numeric Telegram user ID to `allowFrom`. Empty `allowFrom` with `allowlist` is invalid.
+- With **`dmPolicy: "pairing"`** (and no `TELEGRAM_OWNER_USER_ID`), DMs stay blocked until you approve a code; pairing messages can fail to appear if Telegram delivery errors occur—prefer **`TELEGRAM_OWNER_USER_ID`** for a one-owner bot.
 
 ## Changing models or tools
 

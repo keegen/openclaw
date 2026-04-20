@@ -23,4 +23,8 @@ if [[ -d /app/deploy/workspace ]]; then
   done
 fi
 
+# Optional: skip Telegram pairing when Render Shell is unavailable — set
+# TELEGRAM_OWNER_USER_ID in the dashboard (numeric id from @userinfobot).
+node /app/scripts/render-merge-telegram-owner.mjs
+
 exec node /app/openclaw.mjs gateway --allow-unconfigured --bind lan

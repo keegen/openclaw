@@ -184,6 +184,7 @@ COPY --from=runtime-assets --chown=node:node /app/qa ./qa
 COPY --from=build --chown=node:node /app/deploy/openclaw.json ./deploy/openclaw.json
 COPY --from=build --chown=node:node /app/workspace ./deploy/workspace
 COPY --from=build --chmod=755 --chown=node:node /app/scripts/render-entrypoint.sh ./scripts/render-entrypoint.sh
+COPY --from=build --chown=node:node /app/scripts/render-merge-telegram-owner.mjs ./scripts/render-merge-telegram-owner.mjs
 
 # Keep pnpm available in the runtime image for container-local workflows.
 # Use a shared Corepack home so the non-root `node` user does not need a
