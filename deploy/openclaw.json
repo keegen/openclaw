@@ -1,0 +1,38 @@
+{
+  "gateway": {
+    "mode": "local",
+    "bind": "lan"
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/data/workspace",
+      "model": {
+        "primary": "openai/gpt-5.4",
+        "fallbacks": ["openai/gpt-5.4-mini"]
+      },
+      "thinkingDefault": "low",
+      "skills": ["taskflow", "summarize", "weather", "healthcheck"],
+      "heartbeat": {
+        "every": "0m"
+      }
+    }
+  },
+  "tools": {
+    "profile": "coding",
+    "allow": ["gateway"]
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "streaming": {
+        "mode": "partial"
+      },
+      "groups": {
+        "*": {
+          "requireMention": true
+        }
+      }
+    }
+  }
+}

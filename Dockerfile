@@ -179,6 +179,11 @@ COPY --from=runtime-assets --chown=node:node /app/skills ./skills
 COPY --from=runtime-assets --chown=node:node /app/docs ./docs
 COPY --from=runtime-assets --chown=node:node /app/qa ./qa
 
+# Render (and similar) persistent disks: seed default config + workspace on first boot.
+COPY --from=build --chown=node:node /app/deploy/openclaw.json ./deploy/openclaw.json
+COPY --from=build --chown=node:node /app/workspace ./deploy/workspace
+COPY --from=build --chmod=755 --chown=node:node /app/scripts/render-entrypoint.sh ./scripts/render-entrypoint.sh
+
 # Keep pnpm available in the runtime image for container-local workflows.
 # Use a shared Corepack home so the non-root `node` user does not need a
 # first-run network fetch when invoking pnpm.
@@ -278,5 +283,5 @@ USER node
 #   - aliases: /health and /ready
 # For external access from host/ingress, override bind to "lan" and set auth.
 HEALTHCHECK --interval=3m --timeout=10s --start-period=15s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
+  CMD node -e "const p=Number(process.env.OPENCLAW_GATEWAY_PORT||18789);fetch('http://127.0.0.1:'+p+'/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["bash", "scripts/render-entrypoint.sh"]
