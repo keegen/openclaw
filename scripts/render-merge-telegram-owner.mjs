@@ -5,6 +5,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import JSON5 from "json5";
 
 const stateDir = process.env.OPENCLAW_STATE_DIR?.trim();
 const rawId = process.env.TELEGRAM_OWNER_USER_ID?.trim();
@@ -20,10 +21,12 @@ if (!fs.existsSync(configPath)) {
 const allowEntry = /^\d+$/.test(rawId) ? Number(rawId) : rawId;
 let cfg;
 try {
-  cfg = JSON.parse(fs.readFileSync(configPath, "utf8"));
-} catch {
-  process.stderr.write(`render-merge-telegram-owner: invalid JSON at ${configPath}\n`);
-  process.exit(1);
+  cfg = JSON5.parse(fs.readFileSync(configPath, "utf8"));
+} catch (err) {
+  process.stderr.write(
+    `render-merge-telegram-owner: could not parse ${configPath} (${String(err)}); skipping merge so the gateway can start.\n`,
+  );
+  process.exit(0);
 }
 
 cfg.channels = cfg.channels ?? {};

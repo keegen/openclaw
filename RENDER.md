@@ -2,6 +2,17 @@
 
 This fork ships a default OpenClaw config and workspace templates that are **copied once** into the persistent disk (`OPENCLAW_STATE_DIR`, `OPENCLAW_WORKSPACE_DIR`) on first container start. See `scripts/render-entrypoint.sh`.
 
+## Service type (important)
+
+Create a **Web Service**, not a **Background Worker**. OpenClaw runs an HTTP + WebSocket gateway (`/health`, Control UI, inbound webhooks). A Background Worker will still run the same Docker image, but it is the wrong product on Render (no HTTP routing, different expectations) and is harder to operate. If you already created a worker named `kos`, add a new **Web** service from the same repo/branch and point Telegram at the web URL, or delete the worker and redeploy from the [Blueprint](https://render.com/docs/infrastructure-as-code) (`render.yaml` uses `type: web`).
+
+### Crash loop (exit status 1)
+
+1. Open **Logs** (not Events) and read the first error line after each restart.
+2. Confirm **`OPENCLAW_GATEWAY_TOKEN`** is set (Render “generate value” or paste `openssl rand -hex 32`). Binding with `--bind lan` requires auth unless the gateway bootstraps a token on first run.
+3. Confirm **`OPENCLAW_GATEWAY_PORT`** matches what Render expects (this blueprint uses `8080` for Web services).
+4. If you use **`TELEGRAM_OWNER_USER_ID`**, a bad or half-written `openclaw.json` used to crash the merge step; the merge script now skips on parse errors so the gateway can still start—fix the file in Logs if you see a parse warning.
+
 ## Required environment variables (Dashboard)
 
 | Variable | Purpose |
