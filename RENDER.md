@@ -21,6 +21,8 @@ This fork ships a default OpenClaw config and workspace templates that are **cop
 ## Telegram access
 
 - **Default:** `channels.telegram.dmPolicy` is `pairing` in `deploy/openclaw.json`. DM the bot, then in Render **Shell** run `openclaw pairing list telegram` and `openclaw pairing approve telegram <CODE>`.
+- **If the bot “reads” messages but never answers:** check **Logs** for model or provider errors. The Docker image must include the **`openai`** bundled extension (see `Dockerfile` `OPENCLAW_EXTENSIONS`) so `openai/gpt-5.4` can run; also confirm `OPENAI_API_KEY` is set in the dashboard.
+- **Pairing:** until you approve a pairing code, the assistant will not run a full reply for DMs (you should still receive a short pairing message with a code when pairing is working).
 - **Skip pairing (single owner):** edit `/data/.openclaw/openclaw.json` on the disk (or edit `deploy/openclaw.json` in git and redeploy after removing the existing file on disk) to set `dmPolicy` to `allowlist` and add your numeric Telegram user ID to `allowFrom`. Empty `allowFrom` with `allowlist` is invalid.
 
 ## Changing models or tools

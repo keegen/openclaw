@@ -3,6 +3,13 @@
     "mode": "local",
     "bind": "lan"
   },
+  "plugins": {
+    "entries": {
+      "openai": {
+        "enabled": true
+      }
+    }
+  },
   "agents": {
     "defaults": {
       "workspace": "/data/workspace",
