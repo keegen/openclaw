@@ -1,5 +1,6 @@
 # Workspace conventions
 
+- **Identity:** `IDENTITY.md` sets the assistant display name (Claire), emoji, and optional `avatar` (workspace-relative image path for UI surfaces that support it).
 - **Durable notes:** prefer `notes/` in this workspace for anything you want the agent to read later (create the folder as needed).
 - **Scratch:** ephemeral drafts can live in `scratch/` (create if needed).
 - **Secrets:** never store API tokens or passwords in tracked files; use Render environment variables or OpenClaw credential flows instead.
