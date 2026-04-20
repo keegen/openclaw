@@ -16,6 +16,7 @@
   "agents": {
     "defaults": {
       "workspace": "/data/workspace",
+      "userTimezone": "America/Chicago",
       "model": {
         "primary": "openai/gpt-5.4",
         "fallbacks": ["openai/gpt-5.4-mini"]
@@ -23,7 +24,14 @@
       "thinkingDefault": "low",
       "skills": ["taskflow", "summarize", "weather", "healthcheck"],
       "heartbeat": {
-        "every": "0m"
+        "every": "1h",
+        "target": "telegram",
+        "lightContext": true,
+        "activeHours": {
+          "start": "07:00",
+          "end": "20:00",
+          "timezone": "America/Chicago"
+        }
       }
     }
   },

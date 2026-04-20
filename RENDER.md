@@ -54,4 +54,28 @@ If the Render web **Shell** disconnects before you can run commands, use this in
 
 ## Heartbeat
 
-Heartbeat is disabled by default (`agents.defaults.heartbeat.every: "0m"`) to avoid surprise token usage. Enable it in config when you are ready; see [Gateway configuration reference](https://docs.openclaw.ai/gateway/configuration-reference#agentsdefaultsheartbeat).
+This fork’s **`deploy/openclaw.json`** enables heartbeat for the main agent:
+
+- **`every: "1h"`** — hourly tick during active hours only.
+- **`target: "telegram"`** — non-`HEARTBEAT_OK` alerts go to your Telegram DM.
+- **`lightContext: true`** — heartbeat runs inject **`HEARTBEAT.md`** from the workspace bootstrap (smaller prompts); session history still applies unless you add `isolatedSession`.
+- **`activeHours`** — **07:00–20:00** `America/Chicago` (7 AM–8 PM Central). Outside that window ticks are skipped.
+- **`userTimezone`** — `America/Chicago` on `agents.defaults` for consistent timestamps elsewhere.
+
+Checklist and per-task intervals live in **`workspace/HEARTBEAT.md`**. See [Heartbeat (Gateway)](https://docs.openclaw.ai/gateway/heartbeat) for `tasks:` behavior, delivery flags, and cost notes.
+
+### Picking up new heartbeat or config on Render
+
+The entrypoint only copies **`openclaw.json`** and missing **`workspace/*`** files on first boot. After you change heartbeat settings or **`HEARTBEAT.md`** in git, either:
+
+1. **Reseed (simplest):** in Render **Shell** (with the disk mounted):
+
+   ```bash
+   rm /data/workspace/HEARTBEAT.md /data/.openclaw/openclaw.json
+   ```
+
+   Then **restart** the service so `scripts/render-entrypoint.sh` copies fresh **`deploy/openclaw.json`** and **`workspace/`** from the image into `/data`.
+
+2. **Surgical:** edit **`/data/.openclaw/openclaw.json`** and **`/data/workspace/HEARTBEAT.md`** in Shell to match the repo—no restart required for file edits, but a restart applies anything the process cached.
+
+Back up anything you care about before `rm`.
