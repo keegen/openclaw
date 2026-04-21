@@ -24,6 +24,16 @@ describe("applyFinalEffectiveToolPolicy", () => {
     expect(filtered.map((tool) => tool.name)).toEqual(["mcp__bundle__fs_read"]);
   });
 
+  it("does not drop bundled tools when tools.profile is coding (core profile allowlists are not MCP names)", () => {
+    const filtered = applyFinalEffectiveToolPolicy({
+      bundledTools: [makeTool("composio_GOOGLECALENDAR_EVENTS_LIST")],
+      config: { tools: { profile: "coding" } },
+      warn: () => {},
+    });
+
+    expect(filtered.map((tool) => tool.name)).toEqual(["composio_GOOGLECALENDAR_EVENTS_LIST"]);
+  });
+
   it("applies owner-only filtering to bundled tools", () => {
     const filtered = applyFinalEffectiveToolPolicy({
       bundledTools: [makeTool("mcp__bundle__read"), makeTool("mcp__bundle__admin", true)],

@@ -36,6 +36,14 @@ export type ToolPolicyPipelineStep = {
   suppressUnavailableCoreToolWarningAllowlist?: string[];
 };
 
+const CORE_PROFILE_STEP_LABEL_PREFIXES = ["tools.profile", "tools.byProvider.profile"] as const;
+
+function isCoreProfilePipelineStep(step: ToolPolicyPipelineStep): boolean {
+  return CORE_PROFILE_STEP_LABEL_PREFIXES.some(
+    (prefix) => step.label === prefix || step.label.startsWith(`${prefix} (`),
+  );
+}
+
 export function buildDefaultToolPolicyPipelineSteps(params: {
   profilePolicy?: ToolPolicyLike;
   profile?: string;
@@ -49,11 +57,17 @@ export function buildDefaultToolPolicyPipelineSteps(params: {
   agentProviderPolicy?: ToolPolicyLike;
   groupPolicy?: ToolPolicyLike;
   agentId?: string;
+  /**
+   * When filtering **only** bundled MCP/LSP tools (not shipped core tools), skip
+   * `tools.profile` / `tools.byProvider.profile`. Those steps use core-tool-id
+   * allowlists (e.g. coding) and would otherwise drop every bundled tool name.
+   */
+  omitCoreProfileSteps?: boolean;
 }): ToolPolicyPipelineStep[] {
   const agentId = params.agentId?.trim();
   const profile = params.profile?.trim();
   const providerProfile = params.providerProfile?.trim();
-  return [
+  const steps: ToolPolicyPipelineStep[] = [
     {
       policy: params.profilePolicy,
       label: profile ? `tools.profile (${profile})` : "tools.profile",
@@ -87,6 +101,10 @@ export function buildDefaultToolPolicyPipelineSteps(params: {
     },
     { policy: params.groupPolicy, label: "group tools.allow", stripPluginOnlyAllowlist: true },
   ];
+  if (params.omitCoreProfileSteps) {
+    return steps.filter((step) => !isCoreProfilePipelineStep(step));
+  }
+  return steps;
 }
 
 export function applyToolPolicyPipeline(params: {

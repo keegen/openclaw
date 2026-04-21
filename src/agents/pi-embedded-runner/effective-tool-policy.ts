@@ -165,6 +165,7 @@ export function applyFinalEffectiveToolPolicy(
       agentProviderPolicy,
       groupPolicy,
       agentId,
+      omitCoreProfileSteps: true,
     }),
     { policy: params.sandboxToolPolicy, label: "sandbox tools.allow" },
     { policy: subagentPolicy, label: "subagent tools.allow" },
