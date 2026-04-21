@@ -30,6 +30,19 @@ Create a **Web Service**, not a **Background Worker**. OpenClaw runs an HTTP + W
 | `PERPLEXITY_API_KEY` | Alternative search/research backend. |
 | `FIRECRAWL_API_KEY` | Web fetch / crawl via Firecrawl. |
 | `TELEGRAM_OWNER_USER_ID` | Your numeric Telegram user id; entrypoint sets DM `allowlist` so you can skip Shell pairing (see below). |
+| `COMPOSIO_API_KEY` | Composio **consumer / user API key** for HTTP MCP (`mcp.servers.composio` in `deploy/openclaw.json`). Omit if you are not using Composio. |
+
+## Composio + Google Calendar (human steps)
+
+1. **Create or open a Composio project** and generate an API key suitable for **HTTP MCP** (Composio docs refer to a consumer key sent as `x-consumer-api-key`).
+2. In Render → **Environment**, set **`COMPOSIO_API_KEY`** to that value (**sync: false** in `render.yaml` so it is never committed). **Save** and let the service redeploy.
+3. In the **Composio dashboard**, connect **Google Calendar** (OAuth) for the same project/account as the key. Without this step, MCP tools may appear but calls will fail with auth errors.
+4. If the gateway was already running with an old disk config, ensure **`/data/.openclaw/openclaw.json`** includes the **`mcp.servers.composio`** block (merge from `deploy/openclaw.json` or reseed per [Changing models or tools](#changing-models-or-tools)).
+5. **If you ever pasted the key in chat or a ticket**, rotate/revoke it in Composio and update Render.
+
+**Not using Composio?** Either set a placeholder key you never use (not recommended) or remove the **`mcp.servers.composio`** block from the **`openclaw.json` OpenClaw actually loads**—a missing **`COMPOSIO_API_KEY`** makes `${COMPOSIO_API_KEY}` substitution fail at startup.
+
+The repo default uses **`transport: "streamable-http"`** and **`https://connect.composio.dev/mcp`**. If Composio changes URLs or header names, update **`deploy/openclaw.json`** (and your live `/data` copy) to match their current OpenClaw integration doc.
 
 ## Telegram access (no Render Shell required)
 
