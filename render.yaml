@@ -12,11 +12,11 @@ services:
         value: /data/workspace
       - key: OPENCLAW_GATEWAY_TOKEN
         generateValue: true
-      - key: SLACK_BOT_TOKEN
+      - key: TELEGRAM_BOT_TOKEN
         sync: false
-      - key: SLACK_APP_TOKEN
+      - key: OPENAI_API_KEY
         sync: false
-      - key: GEMINI_API_KEY
+      - key: TELEGRAM_OWNER_USER_ID
         sync: false
       - key: COMPOSIO_API_KEY
         sync: false
