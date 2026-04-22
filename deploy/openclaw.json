@@ -8,7 +8,7 @@
   },
   "plugins": {
     "entries": {
-      "openai": {
+      "google-gemini": {
         "enabled": true
       }
     }
@@ -18,14 +18,14 @@
       "workspace": "/data/workspace",
       "userTimezone": "America/Chicago",
       "model": {
-        "primary": "openai/gpt-5.4",
-        "fallbacks": ["openai/gpt-5.4-mini"]
+        "primary": "google-gemini/gemini-2.5-pro",
+        "fallbacks": ["google-gemini/gemini-2.5-flash"]
       },
       "thinkingDefault": "low",
       "skills": ["taskflow", "summarize", "weather", "healthcheck", "composio"],
       "heartbeat": {
         "every": "1h",
-        "target": "telegram",
+        "target": "slack",
         "lightContext": true,
         "activeHours": {
           "start": "07:00",
@@ -50,16 +50,11 @@
     "profile": "coding"
   },
   "channels": {
-    "telegram": {
+    "slack": {
       "enabled": true,
       "dmPolicy": "pairing",
       "streaming": {
         "mode": "partial"
-      },
-      "groups": {
-        "*": {
-          "requireMention": true
-        }
       }
     }
   }
